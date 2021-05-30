@@ -4,7 +4,7 @@ metadata:
   generateName: sreevani-buildah-pr-assignment-
 spec:
   pipelineRef:
-    name: sreevani-cong-leo-pipeline-builda-assignment
+    name: sreevani-pipeline-builda-assignment
   serviceAccountName: build-bot
   workspaces:
     - name: pipeline-shared-data
