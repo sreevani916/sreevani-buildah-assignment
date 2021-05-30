@@ -1,0 +1,51 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  annotations:
+    app.openshift.io/runtime: nodejs
+  name: sreevani-cong-leo-pipeline-builda-assignment
+spec:
+  workspaces:
+    - name: pipeline-shared-data
+      description: |
+        This workspace stores the cloned repository and is available to all steps
+  params:
+    - name: image-repo
+      type: string
+      description: Docker image name
+      default: quay.io/sreevani/express-server-assignment
+  tasks:
+    - name: clone-repository
+      params:
+        - name: url
+          value: https://github.com/cloud-native-garage-method-cohort/sreevani-cong-leo-buildah-assignment.git
+      taskRef:
+        kind: Task
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: pipeline-shared-data
+    - name: install-dependencies
+      taskRef:
+        name: npm
+      workspaces:
+        - name: source
+          workspace: pipeline-shared-data
+      params:
+        - name: ARGS
+          value:
+            - clean-install
+      runAfter:
+        - clone-repository
+    - name: build-image
+      runAfter:
+        - install-dependencies
+      params:
+        - name: IMAGE
+          value: "$(params.image-repo):$(tasks.clone-repository.results.commit)"
+      taskRef:
+        kind: Task
+        name: buildah
+      workspaces:
+        - name: source
+          workspace: pipeline-shared-data

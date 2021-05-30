@@ -1,0 +1,12 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: sreevani-buildah-pr-assignment-
+spec:
+  pipelineRef:
+    name: sreevani-cong-leo-pipeline-builda-assignment
+  serviceAccountName: build-bot
+  workspaces:
+    - name: pipeline-shared-data
+      persistentVolumeClaim:
+        claimName: sreevani-r-pvc
